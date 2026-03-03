@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W2C — TRK Truck Brokerage Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700;800&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --canvas:#FFFFFF;--sidebar:#F8F9FB;--surface:#F2F3F5;--elevated:#E8EAED;--raised:#DDE0E4;
+  --text-heading:#1A1D23;--text-body:#3B3F46;--text-secondary:#6B7280;--text-muted:#9CA3AF;
+  --accent:#ea0029;--accent-dark:#c40022;--accent-bg:rgba(234,0,41,0.05);--accent-border:rgba(234,0,41,0.15);
+  --red:#DC2626;--green:#16A34A;--blue:#2563EB;--teal:#0891B2;--purple:#7C3AED;--pink:#DB2777;--orange:#EA580C;
+  --font-sans:'Source Sans 3','Segoe UI',sans-serif;
+  --font-mono:'JetBrains Mono','Consolas',monospace;
+  --font-head:'Sora',var(--font-sans);
+  --border:rgba(0,0,0,0.08);--border-hover:rgba(0,0,0,0.15);
+  --row-h:36px;
+}
+html{font-size:13px;}
+body{font-family:var(--font-sans);background:var(--canvas);color:var(--text-body);min-height:100vh;line-height:1.4;overflow:hidden;}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.06);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.12);}
+::-webkit-scrollbar-track{background:transparent;}
+
+/* ═══ TOPBAR ═══ */
+.topbar{height:48px;background:#1A1D23;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;padding:0 14px;gap:8px;flex-shrink:0;z-index:100;}
+.topbar-brand{display:flex;align-items:center;gap:8px;font-family:var(--font-head);font-weight:700;font-size:14px;color:#fff;letter-spacing:-0.3px;white-space:nowrap;}
+.topbar-brand .sub{font-size:10px;font-weight:500;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.5px;margin-left:2px;}
+.sep{width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;}
+.tools{display:flex;align-items:center;gap:3px;flex:1;overflow-x:auto;}
+.tools::-webkit-scrollbar{display:none;}
+.tb{background:none;border:1px solid transparent;color:rgba(255,255,255,0.45);font-family:var(--font-sans);font-size:9.5px;font-weight:700;
+  padding:5px 10px;border-radius:5px;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .15s;text-transform:uppercase;letter-spacing:.3px;}
+.tb:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);}
+.tb:active{background:rgba(255,255,255,0.12);transform:scale(0.96);}
+.tb.active{background:rgba(234,0,41,0.12);border-color:rgba(234,0,41,0.25);color:#ff3355;}
+.tb svg{width:13px;height:13px;flex-shrink:0;}
+.tb-accent{background:linear-gradient(135deg,#ea0029,#c40022)!important;color:#fff!important;border:none!important;font-weight:800;padding:6px 14px;}
+.tb-accent:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 4px 12px rgba(234,0,41,0.3);}
+.tb-accent:active{filter:brightness(0.9);transform:scale(0.96);box-shadow:none;}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.lang-pill{display:flex;border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,0.12);}
+.lang-pill button{background:none;border:none;color:rgba(255,255,255,0.4);font-size:9px;font-weight:700;padding:3px 8px;cursor:pointer;transition:all .12s;font-family:var(--font-sans);}
+.lang-pill button.active{background:rgba(234,0,41,0.15);color:#ff3355;}
+.year-badge{font-size:10px;font-family:var(--font-head);font-weight:800;color:#ff3355;background:rgba(234,0,41,0.1);border:1px solid rgba(234,0,41,0.2);padding:3px 10px;border-radius:5px;}
+
+/* ═══ SUBBAR (filters / stats) ═══ */
+.subbar{height:38px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:8px;flex-shrink:0;}
+.subbar select,.subbar input{background:rgba(0,0,0,0.02);border:1px solid var(--border);color:var(--text-body);font-family:var(--font-sans);
+  font-size:11px;padding:4px 8px;border-radius:4px;outline:none;transition:all .15s;}
+.subbar select:focus,.subbar input:focus{border-color:var(--accent-border);background:var(--accent-bg);}
+.subbar input{width:180px;}
+.subbar input::placeholder{color:var(--text-muted);opacity:.5;}
+.sub-label{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);}
+.sub-spacer{flex:1;}
+.stat-pill{font-size:9px;font-family:var(--font-mono);font-weight:600;color:var(--text-muted);padding:3px 8px;border-radius:4px;background:rgba(0,0,0,0.02);border:1px solid var(--border);}
+.stat-pill strong{font-weight:800;}
+.stat-pill.accent strong{color:var(--accent);}
+.stat-pill.green strong{color:var(--green);}
+.stat-pill.red strong{color:var(--red);}
+.sub-clear{background:none;border:1px solid var(--border);color:var(--text-muted);font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;cursor:pointer;display:none;transition:all .15s;}
+.sub-clear.show{display:flex;align-items:center;gap:4px;}
+.sub-clear:hover{border-color:var(--red);color:var(--red);background:rgba(239,68,68,0.06);}
+.sub-clear svg{width:10px;height:10px;}
+
+/* ═══ MAIN LAYOUT ═══ */
+.app{display:flex;flex-direction:column;height:100vh;}
+.grid-area{flex:1;overflow:auto;position:relative;}
+
+/* ═══ EXCEL GRID ═══ */
+.v-table{width:100%;border-collapse:collapse;table-layout:fixed;min-width:1600px;}
+.v-table thead{position:sticky;top:0;z-index:10;}
+.v-table th{background:var(--elevated);font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);
+  padding:0 10px;height:30px;text-align:left;border-bottom:2px solid rgba(234,0,41,0.15);border-right:1px solid rgba(0,0,0,0.03);
+  white-space:nowrap;user-select:none;position:relative;cursor:default;}
+.v-table th:last-child{border-right:none;}
+.v-table th.center{text-align:center;}
+.v-table th .th-resize{position:absolute;right:0;top:0;bottom:0;width:4px;cursor:col-resize;background:transparent;transition:background .12s;}
+.v-table th .th-resize:hover{background:var(--accent);}
+
+/* Column widths */
+.col-drag{width:24px;}.col-ck{width:34px;}.col-num{width:100px;}.col-actions{width:60px;}.col-client{width:180px;}
+.col-date{width:75px;}.col-orig{width:60px;}.col-dest{width:60px;}.col-carrier{width:120px;}
+.col-cost{width:90px;}.col-sell{width:90px;}.col-notes{width:200px;}.col-ref{width:160px;}.col-status{width:130px;}
+
+/* Drag handle */
+.drag-handle{display:flex;align-items:center;justify-content:center;height:100%;cursor:grab;opacity:.2;transition:opacity .12s;color:var(--text-muted);}
+.drag-handle:active{cursor:grabbing;}
+.drag-handle:hover{opacity:.6;}
+.drag-handle svg{width:12px;height:12px;}
+.v-table tr.dragging{opacity:.35;background:var(--surface);}
+.v-table tr.dragging td{border-color:transparent;}
+.v-table tr.drag-over td{border-top:2px solid #ea0029;}
+
+.v-table td{padding:0;border-bottom:1px solid rgba(0,0,0,0.04);border-right:1px solid rgba(0,0,0,0.04);
+  height:var(--row-h);vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.v-table td:last-child{border-right:none;}
+.v-table tr:hover td{background:rgba(0,0,0,0.02);}
+.v-table tr.selected td{background:var(--accent-bg);}
+
+/* Cell types */
+.cell-pad{padding:0 10px;font-size:11.5px;}
+.cell-ck{display:flex;align-items:center;justify-content:center;height:100%;}
+.cell-ck input[type="checkbox"]{accent-color:var(--accent);width:14px;height:14px;cursor:pointer;}
+.cell-num{font-family:var(--font-head);font-size:11px;font-weight:700;color:#ea0029;padding:0 10px;cursor:pointer;transition:color .12s;}
+.cell-num:hover{text-decoration:underline;color:#c40022;}
+.cell-actions{display:flex;align-items:center;justify-content:center;gap:2px;height:100%;}
+.cell-actions button{background:none;border:none;color:var(--text-muted);opacity:.45;cursor:pointer;width:22px;height:22px;border-radius:4px;
+  display:flex;align-items:center;justify-content:center;transition:all .12s;padding:0;}
+.cell-actions button:hover{opacity:1;background:rgba(0,0,0,0.06);color:var(--accent);}
+.cell-actions button svg{width:12px;height:12px;}
+
+/* Agent avatar */
+.avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:800;font-family:var(--font-head);color:#fff;letter-spacing:-.3px;margin:0 auto;}
+
+/* Flag */
+/* Editable cells */
+.cell-edit{width:100%;height:100%;background:none;border:none;color:var(--text-body);font-family:var(--font-sans);font-size:11.5px;padding:0 10px;outline:none;}
+.cell-edit:focus{background:var(--accent-bg);box-shadow:inset 0 0 0 1px var(--accent-border);}
+.cell-edit.mono{font-family:var(--font-mono);font-size:10.5px;}
+.cell-edit.right{text-align:right;}
+.cell-edit.center{text-align:center;}
+
+/* Add row */
+.add-row{padding:8px 14px;border-top:1px solid var(--border);position:sticky;bottom:0;background:var(--canvas);}
+.add-row button{background:none;border:1px dashed var(--border);color:var(--text-muted);font-size:11px;font-weight:600;padding:6px 14px;border-radius:5px;
+  cursor:pointer;transition:all .15s;font-family:var(--font-sans);width:100%;}
+.add-row button:hover{border-color:var(--accent-border);color:var(--accent);background:var(--accent-bg);}
+
+/* ═══ B/L DETAIL PANEL (slide-out) ═══ */
+.bol-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.15);z-index:500;display:none;backdrop-filter:blur(2px);}
+.bol-overlay.open{display:block;}
+.bol-panel{position:fixed;top:0;right:0;bottom:0;width:740px;max-width:90vw;background:var(--canvas);border-left:1px solid var(--border);
+  z-index:501;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);overflow:hidden;display:flex;flex-direction:column;}
+.bol-panel.open{transform:translateX(0);}
+.bol-panel-hdr{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:10px;flex-shrink:0;background:#1A1D23;}
+.bol-panel-hdr h2{font-family:var(--font-head);font-size:14px;font-weight:700;color:#fff;flex:1;}
+.bol-panel-hdr .bol-close{background:none;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);width:28px;height:28px;border-radius:5px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s;}
+.bol-panel-hdr .bol-close:hover{border-color:var(--red);color:var(--red);background:rgba(239,68,68,0.1);}
+.bol-panel-hdr .bol-close svg{width:14px;height:14px;}
+.bol-scroll{flex:1;overflow-y:auto;padding:16px 18px;}
+
+/* B/L form sections */
+.bol-section{margin-bottom:14px;}
+.bol-sec-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.bol-sec-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.bol-sec-title{font-family:var(--font-head);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text-heading);}
+.bol-sec-line{flex:1;height:1px;background:var(--border);}
+.bol-grid{display:grid;gap:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px;}
+.bol-grid.c2{grid-template-columns:1fr 1fr;}
+.bol-grid.c3{grid-template-columns:1fr 1fr 1fr;}
+.bol-grid.c4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.bol-grid.c6{grid-template-columns:repeat(6,1fr);}
+.bf{display:flex;flex-direction:column;gap:2px;}
+.bf.s2{grid-column:span 2;}
+.bf.s3{grid-column:span 3;}
+.bf label{font-size:7.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);line-height:1;}
+.bf input,.bf select,.bf textarea{width:100%;padding:5px 7px;background:rgba(0,0,0,0.02);border:1px solid var(--border);
+  border-radius:4px;color:var(--text-heading);font-family:var(--font-sans);font-size:11.5px;outline:none;transition:all .12s;}
+.bf input:focus,.bf select:focus,.bf textarea:focus{border-color:var(--accent-border);background:var(--accent-bg);}
+.bf textarea{resize:vertical;min-height:48px;font-size:11px;}
+
+/* B/L commodity mini-grid */
+.bol-commodity-grid{border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-top:4px;}
+.bol-c-table{width:100%;border-collapse:collapse;font-size:11px;}
+.bol-c-table th{background:var(--elevated);font-size:7.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--text-muted);padding:5px 6px;text-align:left;border-bottom:1px solid var(--border);border-right:1px solid rgba(0,0,0,0.02);}
+.bol-c-table th:last-child{border-right:none;}
+.bol-c-table td{padding:0;border-bottom:1px solid rgba(0,0,0,0.04);border-right:1px solid rgba(0,0,0,0.04);}
+.bol-c-table td:last-child{border-right:none;}
+.bol-c-table .bc-cell{width:100%;padding:4px 6px;background:none;border:none;color:var(--text-body);font-size:11px;font-family:var(--font-sans);outline:none;}
+.bol-c-table .bc-cell:focus{background:var(--accent-bg);}
+.bol-c-table .bc-cell.mono{font-family:var(--font-mono);font-size:10px;}
+.bol-c-table .bc-cell.right{text-align:right;}
+.bol-c-del{background:none;border:none;color:var(--text-muted);opacity:.35;cursor:pointer;padding:4px;transition:all .12s;}
+.bol-c-del:hover{opacity:1;color:var(--red);}
+.bol-c-del svg{width:11px;height:11px;}
+.bol-c-add{width:100%;padding:5px;background:none;border:none;border-top:1px solid var(--border);color:var(--text-muted);font-size:10px;
+  font-weight:700;cursor:pointer;font-family:var(--font-sans);transition:all .12s;}
+.bol-c-add:hover{background:var(--accent-bg);color:var(--accent);}
+.bol-c-totals{display:flex;justify-content:flex-end;gap:14px;padding:7px 10px;border-top:2px solid var(--accent-border);background:var(--accent-bg);}
+.bol-c-totals .ct-item{display:flex;flex-direction:column;align-items:flex-end;gap:1px;}
+.bol-c-totals .ct-lbl{font-size:7.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);}
+.bol-c-totals .ct-val{font-size:13px;font-weight:800;font-family:var(--font-mono);color:var(--accent);}
+
+/* B/L action footer */
+.bol-footer{padding:10px 18px;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:8px;flex-shrink:0;background:#1A1D23;}
+.bol-btn{padding:7px 16px;border-radius:5px;font-family:var(--font-sans);font-size:10px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.3px;cursor:pointer;border:none;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.bol-btn svg{width:12px;height:12px;}
+.bol-btn-accent{background:linear-gradient(135deg,#ea0029,#c40022);color:#fff;}
+.bol-btn-accent:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 3px 10px rgba(234,0,41,0.3);}
+.bol-btn-ghost{background:none;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);}
+.bol-btn-ghost:hover{border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.05);color:#fff;}
+.bol-btn-red{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#ff5555;}
+.bol-btn-red:hover{background:rgba(239,68,68,0.18);}
+
+/* ═══ PRINT / BOL FORMAT ═══ */
+.print-overlay{display:none;position:fixed;inset:0;z-index:9999;background:#fff;color:#000;overflow:auto;font-family:'Source Sans 3','Arial',sans-serif;font-size:10px;line-height:1.35;}
+.print-overlay.show{display:block;}
+.print-close{position:fixed;top:10px;right:10px;background:#111;color:#fff;border:none;padding:6px 16px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;z-index:10000;}
+.bol-page{width:8in;margin:0 auto;padding:20px 24px;position:relative;}
+.bol-title{text-align:center;font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:.3px;border-bottom:2px solid #000;padding-bottom:6px;margin-bottom:0;}
+.bol-page-num{position:absolute;top:20px;right:24px;font-size:9px;color:#555;}
+
+/* Top grid: shipper left, refs+logo right */
+.bol-top{display:grid;grid-template-columns:1fr 1fr;border:1px solid #000;border-top:none;}
+.bol-top-left{border-right:1px solid #000;}
+.bol-cell{padding:4px 8px;min-height:20px;}
+.bol-cell-label{font-size:7px;color:#555;text-transform:capitalize;margin-bottom:1px;}
+.bol-cell-val{font-size:11px;font-weight:700;color:#000;white-space:pre-line;}
+.bol-cell-val-sm{font-size:10px;font-weight:400;color:#000;white-space:pre-line;}
+.bol-ref-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #000;}
+.bol-ref-cell{padding:3px 8px;border-right:1px solid #000;}
+.bol-ref-cell:last-child{border-right:none;}
+.bol-logo-area{padding:8px;display:flex;align-items:center;justify-content:center;min-height:60px;border-bottom:1px solid #000;}
+.bol-logo-area svg{width:80px;height:46px;}
+
+/* Middle: consignee + notify left, date+carrier+terms right */
+.bol-mid{display:grid;grid-template-columns:1fr 1fr;border:1px solid #000;border-top:none;}
+.bol-mid-left{border-right:1px solid #000;}
+.bol-mid-left .bol-cell{border-bottom:1px solid #000;}
+.bol-mid-left .bol-cell:last-child{border-bottom:none;}
+.bol-mid-right .bol-cell{border-bottom:1px solid #000;}
+.bol-mid-right .bol-cell:last-child{border-bottom:none;}
+
+/* Legal text */
+.bol-legal{border:1px solid #000;border-top:none;padding:6px 8px;font-size:6.5px;line-height:1.3;color:#222;text-align:justify;}
+
+/* Commodity table */
+.bol-goods{border:1px solid #000;border-top:none;width:100%;border-collapse:collapse;}
+.bol-goods th{font-size:7px;font-weight:700;text-align:left;padding:3px 6px;border-right:1px solid #000;border-bottom:1px solid #000;background:#f5f5f5;}
+.bol-goods th:last-child{border-right:none;text-align:right;}
+.bol-goods td{padding:4px 6px;border-right:1px solid #000;vertical-align:top;font-size:10px;}
+.bol-goods td:last-child{border-right:none;text-align:right;}
+.bol-goods .goods-body{min-height:120px;}
+
+/* Bottom 3-col: declared val, notice of claim, detention */
+.bol-bottom-3{display:grid;grid-template-columns:1fr 1.3fr 1fr;border:1px solid #000;border-top:none;}
+.bol-bottom-3>div{padding:5px 7px;border-right:1px solid #000;font-size:6.5px;line-height:1.3;}
+.bol-bottom-3>div:last-child{border-right:none;}
+.bol-bottom-3 .bb-title{font-weight:800;font-size:8px;margin-bottom:3px;}
+
+/* Remark */
+.bol-remark{border:1px solid #000;border-top:none;padding:5px 8px;min-height:50px;}
+.bol-remark-label{font-size:8px;font-style:italic;font-weight:700;margin-bottom:4px;}
+.bol-remark-text{font-size:10px;white-space:pre-line;}
+
+/* ═══ WHITEBOARD ═══ */
+.wb-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.35);z-index:500;display:none;justify-content:center;align-items:center;}
+.wb-overlay.open{display:flex;}
+.wb-panel{width:90vw;height:85vh;max-width:1200px;background:var(--canvas);border-radius:12px;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,0.25);overflow:hidden;}
+.wb-toolbar{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--sidebar);border-bottom:1px solid var(--border);}
+.wb-tool{background:none;border:1px solid var(--border);color:var(--text-muted);width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s;}
+.wb-tool svg{width:16px;height:16px;}
+.wb-tool:hover{background:rgba(0,0,0,0.04);border-color:var(--border-hover);color:var(--text-body);}
+.wb-tool.active{background:var(--accent-bg);border-color:var(--accent-border);color:var(--accent);}
+.wb-tool.wb-danger:hover{border-color:var(--red);color:var(--red);background:rgba(220,38,38,0.06);}
+.wb-sep{width:1px;height:24px;background:var(--border);flex-shrink:0;}
+.wb-color{width:32px;height:32px;border:1px solid var(--border);border-radius:6px;cursor:pointer;padding:2px;background:var(--canvas);}
+.wb-size{border:1px solid var(--border);border-radius:6px;background:var(--canvas);color:var(--text-body);font-size:10px;font-weight:700;padding:4px 8px;height:32px;font-family:var(--font-sans);}
+.wb-canvas-wrap{flex:1;position:relative;overflow:hidden;background:#fafafa;cursor:crosshair;}
+.wb-canvas-wrap canvas{position:absolute;top:0;left:0;width:100%;height:100%;}
+.wb-notes{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+.wb-note{position:absolute;width:180px;min-height:100px;background:#FFF9C4;border:1px solid #E6D85E;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,0.1);padding:6px 8px;pointer-events:all;cursor:move;font-family:var(--font-sans);}
+.wb-note-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.wb-note-head span{font-size:7px;font-weight:800;text-transform:uppercase;color:#8B7800;letter-spacing:.5px;}
+.wb-note-del{background:none;border:none;color:#B8A000;cursor:pointer;font-size:14px;line-height:1;padding:0 2px;}
+.wb-note-del:hover{color:#ea0029;}
+.wb-note textarea{width:100%;min-height:70px;background:none;border:none;resize:vertical;font-size:11px;font-family:var(--font-sans);color:#333;outline:none;line-height:1.4;}
+
+/* CIFFA footer */
+.bol-ciffa{border:1px solid #000;border-top:none;padding:4px 8px;font-size:6px;line-height:1.3;text-align:center;color:#333;}
+
+/* Signatures */
+.bol-sigs{display:grid;grid-template-columns:1.5fr .7fr 1.5fr .7fr 1.5fr .7fr;border:1px solid #000;border-top:none;}
+.bol-sig-cell{padding:4px 8px;border-right:1px solid #000;min-height:28px;}
+.bol-sig-cell:last-child{border-right:none;}
+.bol-sig-label{font-size:7px;color:#555;}
+
+@media print{
+  .print-close{display:none;}
+  body>*:not(.print-overlay){display:none !important;}
+  .print-overlay{position:static;padding:0;}
+  .bol-page{padding:10px 12px;width:100%;}
+}
+
+/* ═══ FOOTER ═══ */
+.footer{height:30px;background:#1A1D23;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;}
+.footer span{font-size:9px;font-family:var(--font-mono);color:rgba(255,255,255,0.4);}
+.footer strong{color:rgba(255,255,255,0.7);font-weight:700;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══ TOPBAR ═══ -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <svg width="38" height="22" viewBox="0 0 196 112" style="flex-shrink:0">
+      <polygon points="54.7 37 46.4 60.1 37 37 30 37 20.9 60.1 12.1 37 1.6 37 16.3 75.1 23.3 75.1 32.9 51.1 42.5 75.1 49.3 75.1 64 37 54.7 37" fill="#fff"/>
+      <path d="M107.1,66.8H89.2l19.3-11.7c3.1-2.8,4.4-5.1,4.9-7.1.8-2.2,1-4.9,0-8.1-3.4-11.6-16.5-11.3-20.8-11.2-13.9.3-17.4,9.7-17.3,14.6l7.5-.1c0-1.1.6-6.9,10-7.1,8.4-.2,11.5,1.9,12.8,4.2h0c.4.9.6,1.8.6,2.8,0,2.4-.4,3.8-2.4,5.6L79.4,61.4c-4.7,2.9-5,4.7-5,7.4v4.1h31.9c6.1,0,9.2-1.2,9.2-8v-.2l-8.4,0Z" fill="#ea0029"/>
+      <path d="M194.5,52.3v-5.6c0-7.1-2.4-9.3-9.8-9.3H163.1c-7.4,0-9.8,2.3-9.8,9.3v19.1c0,7.1,2.4,9.3,9.8,9.3h21.6c7.4,0,9.8-2.3,9.8-9.3v-5.5h-10v6.5h-21.2V45.4h21.2v6.9h10Z" fill="#fff"/>
+    </svg>
+    <span class="sub">TRK</span>
+  </div>
+  <div class="sep"></div>
+  <div class="tools">
+    <button class="tb tb-accent" id="tbAddFile" title="New file / Nouveau dossier">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span data-en="Add File" data-fr="Nouveau dossier">Add File</span>
+    </button>
+    <button class="tb" id="tbBol" title="Bill of Lading / Connaissement">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span data-en="Bill of Lading" data-fr="Connaissement">Bill of Lading</span>
+    </button>
+    <button class="tb" id="tbDuplicate" title="Duplicate / Dupliquer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      <span data-en="Duplicate" data-fr="Dupliquer">Duplicate</span>
+    </button>
+    <button class="tb" id="tbDelete" title="Delete / Supprimer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+      <span data-en="Delete" data-fr="Supprimer">Delete</span>
+    </button>
+    <div class="sep"></div>
+    <button class="tb" id="tbPrint" title="Print B/L / Imprimer B/L">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      <span data-en="Print B/L" data-fr="Imprimer B/L">Print B/L</span>
+    </button>
+    <button class="tb" id="tbExport" title="Export CSV / Exporter CSV">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span data-en="Export CSV" data-fr="Exporter CSV">Export CSV</span>
+    </button>
+    <button class="tb" id="tbWhiteboard" title="Whiteboard / Tableau blanc">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+      <span data-en="Whiteboard" data-fr="Tableau blanc">Whiteboard</span>
+    </button>
+  </div>
+  <div class="tb-right">
+    <div class="lang-pill" id="langPill">
+      <button class="active" data-lang="en">EN</button>
+      <button data-lang="fr">FR</button>
+    </div>
+    <span class="year-badge">TRK 2026</span>
+  </div>
+</div>
+
+<!-- ═══ SUBBAR ═══ -->
+<div class="subbar">
+  <span class="sub-label" data-en="Search" data-fr="Recherche">Search</span>
+  <input type="text" id="fSearch" placeholder="Search files, clients, refs..." data-en="Search files, clients, refs..." data-fr="Rechercher dossiers, clients, réf...">
+  <button class="sub-clear" id="filterClear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> <span data-en="Clear" data-fr="Effacer">Clear</span></button>
+  <div class="sub-spacer"></div>
+  <span class="stat-pill accent" id="statTotal"><strong>0</strong> files</span>
+</div>
+
+<!-- ═══ GRID ═══ -->
+<div class="grid-area" id="gridArea">
+  <table class="v-table">
+    <thead>
+      <tr>
+        <th class="col-drag"></th>
+        <th class="col-ck center"><div class="cell-ck"><input type="checkbox" id="ckAll"></div></th>
+        <th class="col-num" data-en="File #" data-fr="Dossier #">File #</th>
+        <th class="col-actions"></th>
+        <th class="col-client" data-en="Client" data-fr="Client">Client</th>
+        <th class="col-date" data-en="Date" data-fr="Date">Date</th>
+        <th class="col-orig" data-en="Orig." data-fr="Orig.">Orig.</th>
+        <th class="col-dest" data-en="Dest." data-fr="Dest.">Dest.</th>
+        <th class="col-carrier" data-en="Carrier" data-fr="Transporteur">Carrier</th>
+        <th class="col-cost" data-en="Cost" data-fr="Coût">Cost</th>
+        <th class="col-sell" data-en="Sell" data-fr="Vente">Sell</th>
+        <th class="col-notes" data-en="Notes / Service" data-fr="Notes / Service">Notes / Service</th>
+        <th class="col-ref" data-en="Ref." data-fr="Réf.">Ref.</th>
+        <th class="col-status" data-en="Status" data-fr="Statut">Status</th>
+      </tr>
+    </thead>
+    <tbody id="gridBody"></tbody>
+  </table>
+  <div class="add-row"><button id="addRowBtn">+ <span data-en="Add file" data-fr="Ajouter un dossier">Add file</span></button></div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <span><strong id="footFiles">0</strong> <span data-en="files" data-fr="dossiers">files</span></span>
+  <span>|</span>
+  <span><strong id="footSelected">0</strong> <span data-en="selected" data-fr="sélectionné(s)">selected</span></span>
+  <span style="flex:1"></span>
+  <span data-en="W2C Customs Brokerage &mdash; TRK" data-fr="W2C Gestion Douani&egrave;re &mdash; TRK">W2C Customs Brokerage &mdash; TRK</span>
+</div>
+</div>
+
+<!-- ═══ B/L DETAIL PANEL ═══ -->
+<div class="bol-overlay" id="bolOverlay"></div>
+<div class="bol-panel" id="bolPanel">
+  <div class="bol-panel-hdr">
+    <h2 id="bolTitle" data-en="Bill of Lading" data-fr="Connaissement">Bill of Lading</h2>
+    <button class="bol-close" id="bolClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="bol-scroll" id="bolScroll"></div>
+  <div class="bol-footer">
+    <button class="bol-btn bol-btn-accent" id="bolSave"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> <span data-en="Save B/L" data-fr="Sauvegarder B/L">Save B/L</span></button>
+    <button class="bol-btn bol-btn-ghost" id="bolPrintBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> <span data-en="Print" data-fr="Imprimer">Print</span></button>
+    <span style="flex:1"></span>
+    <button class="bol-btn bol-btn-red" id="bolDelete"><span data-en="Delete B/L" data-fr="Supprimer B/L">Delete B/L</span></button>
+  </div>
+</div>
+
+<!-- ═══ PRINT ═══ -->
+<div class="print-overlay" id="printOverlay">
+  <button class="print-close" id="printClose">Close / Fermer</button>
+  <div class="bol-page" id="printContent"></div>
+</div>
+
+<!-- ═══ WHITEBOARD PANEL ═══ -->
+<div class="wb-overlay" id="wbOverlay">
+  <div class="wb-panel" id="wbPanel">
+    <div class="bol-panel-hdr">
+      <h2 data-en="Whiteboard" data-fr="Tableau blanc">Whiteboard</h2>
+      <button class="bol-close" id="wbClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="wb-toolbar" id="wbToolbar">
+      <button class="wb-tool active" data-tool="pen" title="Pen / Stylo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+      <button class="wb-tool" data-tool="eraser" title="Eraser / Gomme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H7L3 16l9-9 8 8-4 4z"/><path d="M6.5 13.5l5-5"/></svg></button>
+      <div class="wb-sep"></div>
+      <input type="color" id="wbColor" value="#ea0029" class="wb-color" title="Color / Couleur">
+      <select id="wbSize" class="wb-size">
+        <option value="2">Fine</option>
+        <option value="4" selected>Medium</option>
+        <option value="8">Thick</option>
+      </select>
+      <div class="wb-sep"></div>
+      <button class="wb-tool" id="wbAddNote" title="Add note / Ajouter note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="1"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/></svg></button>
+      <button class="wb-tool" id="wbUndo" title="Undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 105.64-8.36L1 10"/></svg></button>
+      <button class="wb-tool wb-danger" id="wbClear" title="Clear all / Tout effacer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
+    </div>
+    <div class="wb-canvas-wrap" id="wbCanvasWrap">
+      <canvas id="wbCanvas"></canvas>
+      <div class="wb-notes" id="wbNotes"></div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+(function(){
+// ═══════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════
+var CARRIERS=['Freightcom','Elite Logix','Kwest Freight','Morneau','Trans-Plus','Labranche','DHL','FedEx','UPS','Purolator','Day & Ross','Manitoulin'];
+var PORTS=[
+  {code:'0406',name:'Lacolle, QC'},{code:'0482',name:'St-Bernard-de-Lacolle'},{code:'0609',name:'Fort Erie / Peace Bridge'},
+  {code:'0615',name:'Queenston / Lewiston'},{code:'0605',name:'Windsor / Ambassador'},{code:'0607',name:'Sarnia / Blue Water'},
+  {code:'0504',name:'Emerson, MB'},{code:'3501',name:'Douglas / Pacific Hwy'},{code:'0213',name:'Woodstock / Houlton'}
+];
+
+var lang='en';
+var files=[];
+var _fid=2114;
+var _bolLines={};
+
+// ═══════════════════════════════════════
+//  LOAD / SAVE
+// ═══════════════════════════════════════
+function save(){try{localStorage.setItem('w2c_trk',JSON.stringify({v:10,files:files,fid:_fid,bolLines:_bolLines}));}catch(e){}}
+function load(){try{var d=JSON.parse(localStorage.getItem('w2c_trk'));if(d&&d.v===6){files=d.files||[];_fid=d.fid||2114;_bolLines=d.bolLines||{};
+  // Defensive: ensure every file has a bol object
+  files.forEach(function(f){if(!f.bol)f.bol={shipName:'',shipAddr:'',shipCity:'',shipState:'',shipZip:'',shipCountry:'',conName:'',conAddr:'',conCity:'',conState:'',conZip:'',conCountry:'',carrName:'',carrScac:'',carrDriver:'',carrPlate:'',carrTrailer:'',carrSeal:'',carrPro:'',carrPickup:'',carrDelivery:'',carrFreight:'',port:'',incoterm:'',currency:'',pars:'',notesSpecial:'',notesCustoms:''};});
+  }else{try{localStorage.removeItem('w2c_trk');}catch(e2){}}}catch(e){}}
+load();
+
+// Start empty
+if(!files.length){ _fid=2114; }
+
+// ═══════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function L(en,fr){return lang==='fr'?fr:en;}
+function fmtN(n,d){return Number(n||0).toLocaleString('en-CA',{minimumFractionDigits:d,maximumFractionDigits:d});}
+function getFile(id){for(var i=0;i<files.length;i++){if(files[i].id===id)return files[i];}return null;}
+function shortDate(d){if(!d)return'';var p=d.split('-');var months=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+  var mFr=['janv','fevr','mars','avr','mai','juin','juil','aout','sept','oct','nov','dec'];
+  var mi=parseInt(p[1])-1;return(lang==='fr'?mFr[mi]:months[mi])+'. '+parseInt(p[2]);}
+
+// ═══════════════════════════════════════
+//  LANGUAGE
+// ═══════════════════════════════════════
+document.getElementById('langPill').addEventListener('click',function(e){
+  var btn=e.target.closest('button');if(!btn||btn.classList.contains('active'))return;
+  this.querySelectorAll('button').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');lang=btn.dataset.lang;
+  document.querySelectorAll('[data-'+lang+']').forEach(function(el){
+    if(el.tagName==='INPUT')el.placeholder=el.dataset[lang];
+    else el.textContent=el.dataset[lang];
+  });
+  render();
+});
+
+// ═══════════════════════════════════════
+//  FILTERS
+// ═══════════════════════════════════════
+var fSearch=document.getElementById('fSearch');
+
+// ═══════════════════════════════════════
+//  RENDER GRID
+// ═══════════════════════════════════════
+var gridBody=document.getElementById('gridBody');
+var _searchTimer=null;
+
+function getVisible(){
+  var q=(fSearch.value||'').toLowerCase();
+  return files.filter(function(f){
+    if(q){
+      var hay=(f.num+' '+f.client+' '+f.carrier+' '+f.notes+' '+f.ref+' '+f.orig+' '+f.dest+' '+f.status).toLowerCase();
+      if(hay.indexOf(q)<0)return false;
+    }
+    return true;
+  });
+}
+function hasFilters(){return !!fSearch.value;}
+function updateClear(){document.getElementById('filterClear').className='sub-clear'+(hasFilters()?' show':'');}
+
+function render(){
+  var vis=getVisible();
+  updateClear();
+  // Stats
+  document.getElementById('statTotal').innerHTML='<strong>'+files.length+'</strong> '+L('files','dossiers');
+
+  var h='';
+  vis.forEach(function(f){
+    h+='<tr data-id="'+f.id+'"'+(f.selected?' class="selected"':'')+'>';
+    h+='<td><div class="drag-handle" draggable="true" data-id="'+f.id+'"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg></div></td>';
+    h+='<td><div class="cell-ck"><input type="checkbox" class="row-ck" data-id="'+f.id+'"'+(f.selected?' checked':'')+'></div></td>';
+    h+='<td><span class="cell-num" data-id="'+f.id+'">'+esc(f.num)+'</span></td>';
+    h+='<td><div class="cell-actions">';
+    h+='<button class="act-bol" data-id="'+f.id+'" title="'+L('Open B/L','Ouvrir B/L')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></button>';
+    h+='<button class="act-dup" data-id="'+f.id+'" title="'+L('Duplicate','Dupliquer')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>';
+    h+='</div></td>';
+    h+='<td><input class="cell-edit" data-id="'+f.id+'" data-field="client" value="'+esc(f.client)+'"></td>';
+    h+='<td class="cell-pad" style="font-size:10.5px;color:var(--text-secondary)">'+shortDate(f.date)+'</td>';
+    h+='<td><input class="cell-edit center" data-id="'+f.id+'" data-field="orig" value="'+esc(f.orig)+'" style="text-transform:uppercase"></td>';
+    h+='<td><input class="cell-edit center" data-id="'+f.id+'" data-field="dest" value="'+esc(f.dest)+'" style="text-transform:uppercase"></td>';
+    h+='<td><input class="cell-edit" data-id="'+f.id+'" data-field="carrier" value="'+esc(f.carrier)+'"></td>';
+    h+='<td><input class="cell-edit mono right" data-id="'+f.id+'" data-field="cost" value="'+(f.cost||'')+'"></td>';
+    h+='<td><input class="cell-edit mono right" data-id="'+f.id+'" data-field="sell" value="'+(f.sell||'')+'"></td>';
+    h+='<td><input class="cell-edit" data-id="'+f.id+'" data-field="notes" value="'+esc(f.notes)+'" style="font-size:10.5px;color:var(--text-secondary)"></td>';
+    h+='<td><input class="cell-edit mono" data-id="'+f.id+'" data-field="ref" value="'+esc(f.ref)+'" style="font-size:10px"></td>';
+    h+='<td><input class="cell-edit" data-id="'+f.id+'" data-field="status" value="'+esc(f.status)+'" style="font-size:10px;text-transform:uppercase"></td>';
+    h+='</tr>';
+  });
+  gridBody.innerHTML=h;
+  // Footer
+  var selCount=files.filter(function(f){return f.selected;}).length;
+  document.getElementById('footFiles').textContent=files.length;
+  document.getElementById('footSelected').textContent=selCount;
+}
+
+// ═══════════════════════════════════════
+//  GRID EVENTS
+// ═══════════════════════════════════════
+// Inline edit
+gridBody.addEventListener('change',function(e){
+  var el=e.target;
+  if(el.classList.contains('cell-edit')){
+    var id=parseInt(el.dataset.id),field=el.dataset.field,f=getFile(id);
+    if(f){f[field]=el.value;save();}
+  }
+  if(el.classList.contains('row-ck')){
+    var id=parseInt(el.dataset.id),f=getFile(id);
+    if(f){f.selected=el.checked;save();render();}
+  }
+});
+gridBody.addEventListener('input',function(e){
+  var el=e.target;
+  if(el.classList.contains('cell-edit')){
+    var id=parseInt(el.dataset.id),field=el.dataset.field,f=getFile(id);
+    if(f)f[field]=el.value;
+  }
+});
+
+// Check all
+document.getElementById('ckAll').addEventListener('change',function(){
+  var checked=this.checked;
+  var vis=getVisible();
+  vis.forEach(function(f){f.selected=checked;});
+  save();render();
+});
+
+// Click handlers
+gridBody.addEventListener('click',function(e){
+  // B/L button
+  var bolBtn=e.target.closest('.act-bol');
+  if(bolBtn){e.stopPropagation();openBol(parseInt(bolBtn.dataset.id));return;}
+  // Duplicate
+  var dupBtn=e.target.closest('.act-dup');
+  if(dupBtn){e.stopPropagation();duplicateFile(parseInt(dupBtn.dataset.id));return;}
+  // File number click
+  var numSpan=e.target.closest('.cell-num');
+  if(numSpan){e.stopPropagation();openBol(parseInt(numSpan.dataset.id));return;}
+});
+
+// Filters
+fSearch.addEventListener('input',function(){clearTimeout(_searchTimer);_searchTimer=setTimeout(render,150);});
+document.getElementById('filterClear').addEventListener('click',function(){fSearch.value='';render();});
+
+// ═══════════════════════════════════════
+//  DRAG & DROP REORDER
+// ═══════════════════════════════════════
+var _dragId=null;
+gridBody.addEventListener('dragstart',function(e){
+  var handle=e.target.closest('.drag-handle');if(!handle){e.preventDefault();return;}
+  var tr=handle.closest('tr');if(!tr)return;
+  _dragId=parseInt(tr.dataset.id);
+  tr.classList.add('dragging');
+  e.dataTransfer.effectAllowed='move';
+  e.dataTransfer.setData('text/plain',_dragId);
+});
+gridBody.addEventListener('dragend',function(e){
+  gridBody.querySelectorAll('.dragging').forEach(function(r){r.classList.remove('dragging');});
+  gridBody.querySelectorAll('.drag-over').forEach(function(r){r.classList.remove('drag-over');});
+  _dragId=null;
+});
+gridBody.addEventListener('dragover',function(e){
+  e.preventDefault();e.dataTransfer.dropEffect='move';
+  var tr=e.target.closest('tr');if(!tr||parseInt(tr.dataset.id)===_dragId)return;
+  gridBody.querySelectorAll('.drag-over').forEach(function(r){r.classList.remove('drag-over');});
+  tr.classList.add('drag-over');
+});
+gridBody.addEventListener('dragleave',function(e){
+  var tr=e.target.closest('tr');if(tr)tr.classList.remove('drag-over');
+});
+gridBody.addEventListener('drop',function(e){
+  e.preventDefault();
+  gridBody.querySelectorAll('.drag-over').forEach(function(r){r.classList.remove('drag-over');});
+  var tr=e.target.closest('tr');if(!tr||_dragId===null)return;
+  var dropId=parseInt(tr.dataset.id);if(dropId===_dragId)return;
+  var fromIdx=-1,toIdx=-1;
+  for(var i=0;i<files.length;i++){
+    if(files[i].id===_dragId)fromIdx=i;
+    if(files[i].id===dropId)toIdx=i;
+  }
+  if(fromIdx<0||toIdx<0)return;
+  var item=files.splice(fromIdx,1)[0];
+  files.splice(toIdx,0,item);
+  _dragId=null;save();render();
+});
+
+// ═══════════════════════════════════════
+//  ADD / DUPLICATE / DELETE
+// ═══════════════════════════════════════
+document.getElementById('addRowBtn').addEventListener('click',addNewFile);
+document.getElementById('tbAddFile').addEventListener('click',addNewFile);
+function addNewFile(){
+  var today=new Date().toISOString().slice(0,10);
+  files.push({id:_fid,num:'TRK '+_fid,client:'',date:today,orig:'',dest:'',
+    carrier:'',cost:'',sell:'',notes:'',ref:'',status:'',selected:false,
+    bol:{shipName:'',shipAddr:'',shipCity:'',shipState:'',shipZip:'',shipCountry:'',
+      conName:'',conAddr:'',conCity:'',conState:'',conZip:'',conCountry:'',
+      carrName:'',carrScac:'',carrDriver:'',carrPlate:'',carrTrailer:'',carrSeal:'',
+      carrPro:'',carrPickup:today,carrDelivery:'',carrFreight:'',
+      port:'',incoterm:'',currency:'',pars:'',notesSpecial:'',notesCustoms:''}
+  });
+  _fid++;save();render();
+  var ga=document.getElementById('gridArea');ga.scrollTop=ga.scrollHeight;
+  // Focus the client cell of the new row
+  setTimeout(function(){
+    var inputs=gridBody.querySelectorAll('input[data-field="client"]');
+    if(inputs.length)inputs[inputs.length-1].focus();
+  },50);
+}
+function duplicateFile(id){
+  var src=getFile(id);if(!src)return;
+  var cp=JSON.parse(JSON.stringify(src));
+  cp.id=_fid;cp.num='TRK '+_fid;cp.selected=false;cp.status='';
+  files.push(cp);_fid++;save();render();
+}
+document.getElementById('tbDuplicate').addEventListener('click',function(){
+  var sel=files.filter(function(f){return f.selected;});
+  if(!sel.length){alert(L('Select one or more files first','S\u00e9lectionnez un ou plusieurs dossiers'));return;}
+  sel.forEach(function(f){duplicateFile(f.id);});
+});
+document.getElementById('tbDelete').addEventListener('click',function(){
+  var sel=files.filter(function(f){return f.selected;});
+  if(!sel.length){alert(L('Select one or more files first','S\u00e9lectionnez un ou plusieurs dossiers'));return;}
+  if(!confirm(L('Delete '+sel.length+' selected file(s)?','Supprimer '+sel.length+' dossier(s) s\u00e9lectionn\u00e9(s) ?')))return;
+  var ids={};sel.forEach(function(f){ids[f.id]=true;});
+  files=files.filter(function(f){return !ids[f.id];});
+  save();render();
+});
+
+// ═══════════════════════════════════════
+//  B/L PANEL
+// ═══════════════════════════════════════
+var bolOverlay=document.getElementById('bolOverlay');
+var bolPanel=document.getElementById('bolPanel');
+var bolScroll=document.getElementById('bolScroll');
+var _bolFileId=null;
+
+function closeBol(){bolPanel.classList.remove('open');bolOverlay.classList.remove('open');_bolFileId=null;}
+document.getElementById('bolClose').addEventListener('click',closeBol);
+bolOverlay.addEventListener('click',closeBol);
+
+document.getElementById('tbBol').addEventListener('click',function(){
+  var sel=files.filter(function(f){return f.selected;});
+  if(sel.length===1){openBol(sel[0].id);}
+  else if(sel.length>1){alert(L('Select only one file to open B/L','S\u00e9lectionnez un seul dossier pour ouvrir le B/L'));}
+  else{
+    // No selection: create a new file and open its B/L
+    addNewFile();
+    var last=files[files.length-1];
+    if(last)openBol(last.id);
+  }
+});
+
+function openBol(fileId){
+  var f=getFile(fileId);if(!f)return;
+  if(!f.bol)f.bol={shipName:'',shipAddr:'',shipCity:'',shipState:'',shipZip:'',shipCountry:f.orig||'US',conName:'',conAddr:'',conCity:'',conState:'',conZip:'',conCountry:f.dest||'CA',carrName:f.carrier||'',carrScac:'',carrDriver:'',carrPlate:'',carrTrailer:'',carrSeal:'',carrPro:f.ref||'',carrPickup:f.date||'',carrDelivery:'',carrFreight:'prepaid',port:'',incoterm:'FCA',currency:'USD',pars:'',notesSpecial:'',notesCustoms:''};
+  _bolFileId=fileId;
+  var b=f.bol;
+  // Build B/L form
+  var h='';
+  // Reference
+  h+='<div class="bol-section"><div class="bol-sec-hdr"><span class="bol-sec-dot" style="background:var(--accent)"></span><span class="bol-sec-title">'+L('Document Reference','R\u00e9f\u00e9rence du document')+'</span><span class="bol-sec-line"></span></div>';
+  h+='<div class="bol-grid c4">';
+  h+='<div class="bf"><label>'+L('B/L Number','No. B/L')+'</label><input id="bfNum" value="'+esc(f.num)+'" readonly style="opacity:.6"></div>';
+  h+='<div class="bf"><label>PARS / PAPS</label><input id="bfPars" value="'+esc(b.pars)+'" placeholder="1234-5678-9012"></div>';
+  h+='<div class="bf"><label>'+L('Port of Entry','Port d\'entr\u00e9e')+'</label><input id="bfPort" value="'+esc(b.port)+'" placeholder="ex: Lacolle 0406"></div>';
+  h+='<div class="bf"><label>Incoterm</label><input id="bfInco" value="'+esc(b.incoterm)+'" placeholder="ex: FCA" style="text-transform:uppercase"></div>';
+  h+='<div class="bf"><label>'+L('Currency','Devise')+'</label><input id="bfCur" value="'+esc(b.currency)+'" placeholder="ex: USD" style="text-transform:uppercase"></div>';
+  h+='</div></div>';
+
+  // Shipper
+  h+='<div class="bol-section"><div class="bol-sec-hdr"><span class="bol-sec-dot" style="background:var(--green)"></span><span class="bol-sec-title">'+L('Shipper / Exporter','Exp\u00e9diteur / Exportateur')+'</span><span class="bol-sec-line"></span></div>';
+  h+='<div class="bol-grid c2">';
+  h+='<div class="bf s2"><label>'+L('Company','Raison sociale')+'</label><input id="bfShipName" value="'+esc(b.shipName)+'"></div>';
+  h+='<div class="bf s2"><label>'+L('Address','Adresse')+'</label><input id="bfShipAddr" value="'+esc(b.shipAddr)+'"></div>';
+  h+='<div class="bf"><label>'+L('City','Ville')+'</label><input id="bfShipCity" value="'+esc(b.shipCity)+'"></div>';
+  h+='<div class="bf"><label>'+L('State / Prov.','\u00c9tat / Prov.')+'</label><input id="bfShipState" value="'+esc(b.shipState)+'"></div>';
+  h+='<div class="bf"><label>'+L('Zip','Code postal')+'</label><input id="bfShipZip" value="'+esc(b.shipZip)+'"></div>';
+  h+='<div class="bf"><label>'+L('Country','Pays')+'</label><input id="bfShipCountry" value="'+esc(b.shipCountry)+'" placeholder="ex: US" style="text-transform:uppercase"></div></div></div>';
+
+  // Consignee
+  h+='<div class="bol-section"><div class="bol-sec-hdr"><span class="bol-sec-dot" style="background:var(--blue)"></span><span class="bol-sec-title">'+L('Consignee / Importer','Destinataire / Importateur')+'</span><span class="bol-sec-line"></span></div>';
+  h+='<div class="bol-grid c2">';
+  h+='<div class="bf s2"><label>'+L('Company','Raison sociale')+'</label><input id="bfConName" value="'+esc(b.conName)+'"></div>';
+  h+='<div class="bf s2"><label>'+L('Address','Adresse')+'</label><input id="bfConAddr" value="'+esc(b.conAddr)+'"></div>';
+  h+='<div class="bf"><label>'+L('City','Ville')+'</label><input id="bfConCity" value="'+esc(b.conCity)+'"></div>';
+  h+='<div class="bf"><label>'+L('State / Prov.','\u00c9tat / Prov.')+'</label><input id="bfConState" value="'+esc(b.conState)+'"></div>';
+  h+='<div class="bf"><label>'+L('Zip','Code postal')+'</label><input id="bfConZip" value="'+esc(b.conZip)+'"></div>';
+  h+='<div class="bf"><label>'+L('Country','Pays')+'</label><input id="bfConCountry" value="'+esc(b.conCountry)+'" placeholder="ex: CA" style="text-transform:uppercase"></div></div></div>';
+
+  // Carrier
+  h+='<div class="bol-section"><div class="bol-sec-hdr"><span class="bol-sec-dot" style="background:var(--teal)"></span><span class="bol-sec-title">'+L('Carrier / Transport','Transporteur')+'</span><span class="bol-sec-line"></span></div>';
+  h+='<div class="bol-grid c3">';
+  h+='<div class="bf"><label>'+L('Carrier','Transporteur')+'</label><input id="bfCarrName" value="'+esc(b.carrName)+'"></div>';
+  h+='<div class="bf"><label>SCAC</label><input id="bfCarrScac" value="'+esc(b.carrScac)+'" maxlength="4" style="text-transform:uppercase"></div>';
+  h+='<div class="bf"><label>'+L('Driver','Chauffeur')+'</label><input id="bfCarrDriver" value="'+esc(b.carrDriver)+'"></div>';
+  h+='<div class="bf"><label>'+L('Plate','Plaque')+'</label><input id="bfCarrPlate" value="'+esc(b.carrPlate)+'" style="text-transform:uppercase"></div>';
+  h+='<div class="bf"><label>'+L('Trailer','Remorque')+'</label><input id="bfCarrTrailer" value="'+esc(b.carrTrailer)+'"></div>';
+  h+='<div class="bf"><label>'+L('Seal','Scell\u00e9')+'</label><input id="bfCarrSeal" value="'+esc(b.carrSeal)+'"></div>';
+  h+='<div class="bf"><label>Pro #</label><input id="bfCarrPro" value="'+esc(b.carrPro)+'"></div>';
+  h+='<div class="bf"><label>'+L('Pickup','Cueillette')+'</label><input type="date" id="bfCarrPickup" value="'+(b.carrPickup||'')+'"></div>';
+  h+='<div class="bf"><label>'+L('Delivery','Livraison')+'</label><input type="date" id="bfCarrDelivery" value="'+(b.carrDelivery||'')+'"></div>';
+  h+='<div class="bf"><label>'+L('Freight Terms','Conditions de fret')+'</label><input id="bfCarrFreight" value="'+esc(b.carrFreight)+'" placeholder="ex: Prepaid"></div>';
+  h+='</div></div>';
+
+  // Commodity lines
+  var lines=_bolLines[fileId]||[];
+  if(!lines.length)lines=[{desc:f.notes||'',hs:'',pcs:'',pkg:'Pallets',grossWt:'',netWt:'',value:f.cost||'',origin:f.orig}];
+  _bolLines[fileId]=lines;
+
+  h+='<div class="bol-section"><div class="bol-sec-hdr"><span class="bol-sec-dot" style="background:var(--accent)"></span><span class="bol-sec-title">'+L('Commodity Lines','Lignes de marchandise')+'</span><span class="bol-sec-line"></span></div>';
+  h+='<div class="bol-commodity-grid"><table class="bol-c-table"><thead><tr>';
+  h+='<th style="width:30px">#</th><th>'+L('Description','Description')+'</th><th style="width:90px">HS</th><th style="width:50px">'+L('Pcs','Colis')+'</th>';
+  h+='<th style="width:70px">'+L('Pkg','Emb.')+'</th><th style="width:80px">'+L('Gross kg','Brut kg')+'</th><th style="width:80px">'+L('Net kg','Net kg')+'</th>';
+  h+='<th style="width:80px">'+L('Value','Valeur')+'</th><th style="width:50px">'+L('Orig','Orig')+'</th><th style="width:28px"></th>';
+  h+='</tr></thead><tbody id="bolCLines">';
+  lines.forEach(function(ln,i){
+    h+=bolLineRow(ln,i);
+  });
+  h+='</tbody></table>';
+  h+='<button class="bol-c-add" id="bolAddLine">+ '+L('Add Line','Ajouter ligne')+'</button>';
+  h+='<div class="bol-c-totals" id="bolCTotals"></div>';
+  h+='</div></div>';
+
+  bolScroll.innerHTML=h;
+  bolOverlay.classList.add('open');
+  setTimeout(function(){bolPanel.classList.add('open');},10);
+
+  // Wire commodity events
+  wireBolLines(fileId);
+  updateBolTotals(fileId);
+}
+
+function bolLineRow(ln,i){
+  var h='<tr data-idx="'+i+'">';
+  h+='<td style="text-align:center;font-size:9px;color:var(--text-muted);opacity:.4">'+(i+1)+'</td>';
+  h+='<td><input class="bc-cell" data-f="desc" value="'+esc(ln.desc)+'"></td>';
+  h+='<td><input class="bc-cell mono" data-f="hs" value="'+esc(ln.hs)+'" placeholder="0000.00.00"></td>';
+  h+='<td><input class="bc-cell mono right" data-f="pcs" value="'+esc(ln.pcs)+'"></td>';
+  h+='<td><input class="bc-cell" data-f="pkg" value="'+esc(ln.pkg)+'"></td>';
+  h+='<td><input class="bc-cell mono right" data-f="grossWt" value="'+esc(ln.grossWt)+'"></td>';
+  h+='<td><input class="bc-cell mono right" data-f="netWt" value="'+esc(ln.netWt)+'"></td>';
+  h+='<td><input class="bc-cell mono right" data-f="value" value="'+esc(ln.value)+'"></td>';
+  h+='<td><input class="bc-cell mono" data-f="origin" value="'+esc(ln.origin)+'" maxlength="2" style="text-transform:uppercase;text-align:center"></td>';
+  h+='<td style="text-align:center"><button class="bol-c-del" data-idx="'+i+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></td>';
+  h+='</tr>';
+  return h;
+}
+
+function wireBolLines(fileId){
+  var tbody=document.getElementById('bolCLines');
+  if(!tbody)return;
+  tbody.addEventListener('input',function(e){
+    var el=e.target;if(!el.dataset.f)return;
+    var tr=el.closest('tr');var idx=parseInt(tr.dataset.idx);
+    var lines=_bolLines[fileId];if(lines&&lines[idx])lines[idx][el.dataset.f]=el.value;
+    updateBolTotals(fileId);
+  });
+  tbody.addEventListener('click',function(e){
+    var del=e.target.closest('.bol-c-del');if(!del)return;
+    var idx=parseInt(del.dataset.idx);
+    var lines=_bolLines[fileId];if(lines&&lines.length>1){lines.splice(idx,1);rerenderBolLines(fileId);}
+  });
+  var addBtn=document.getElementById('bolAddLine');
+  if(addBtn)addBtn.addEventListener('click',function(){
+    var lines=_bolLines[fileId]||[];
+    lines.push({desc:'',hs:'',pcs:'',pkg:'Pallets',grossWt:'',netWt:'',value:'',origin:'US'});
+    _bolLines[fileId]=lines;
+    rerenderBolLines(fileId);
+  });
+}
+
+function rerenderBolLines(fileId){
+  var tbody=document.getElementById('bolCLines');if(!tbody)return;
+  var lines=_bolLines[fileId]||[];
+  var h='';lines.forEach(function(ln,i){h+=bolLineRow(ln,i);});
+  tbody.innerHTML=h;
+  updateBolTotals(fileId);
+}
+
+function updateBolTotals(fileId){
+  var el=document.getElementById('bolCTotals');if(!el)return;
+  var lines=_bolLines[fileId]||[];
+  var pcs=0,gw=0,nw=0,val=0;
+  lines.forEach(function(ln){pcs+=parseFloat(ln.pcs)||0;gw+=parseFloat(ln.grossWt)||0;nw+=parseFloat(ln.netWt)||0;val+=parseFloat(ln.value)||0;});
+  el.innerHTML='<div class="ct-item"><span class="ct-lbl">'+L('Pieces','Colis')+'</span><span class="ct-val">'+fmtN(pcs,0)+'</span></div>'+
+    '<div class="ct-item"><span class="ct-lbl">'+L('Gross','Brut')+'</span><span class="ct-val">'+fmtN(gw,2)+' kg</span></div>'+
+    '<div class="ct-item"><span class="ct-lbl">'+L('Net','Net')+'</span><span class="ct-val">'+fmtN(nw,2)+' kg</span></div>'+
+    '<div class="ct-item"><span class="ct-lbl">'+L('Value','Valeur')+'</span><span class="ct-val">'+fmtN(val,2)+'</span></div>';
+}
+
+// Save B/L
+document.getElementById('bolSave').addEventListener('click',function(){
+  if(!_bolFileId)return;
+  var f=getFile(_bolFileId);if(!f)return;
+  var b=f.bol;
+  b.pars=document.getElementById('bfPars').value;
+  b.port=document.getElementById('bfPort').value;
+  b.incoterm=document.getElementById('bfInco').value;
+  b.currency=document.getElementById('bfCur').value;
+  b.shipName=document.getElementById('bfShipName').value;b.shipAddr=document.getElementById('bfShipAddr').value;
+  b.shipCity=document.getElementById('bfShipCity').value;b.shipState=document.getElementById('bfShipState').value;
+  b.shipZip=document.getElementById('bfShipZip').value;b.shipCountry=document.getElementById('bfShipCountry').value;
+  b.conName=document.getElementById('bfConName').value;b.conAddr=document.getElementById('bfConAddr').value;
+  b.conCity=document.getElementById('bfConCity').value;b.conState=document.getElementById('bfConState').value;
+  b.conZip=document.getElementById('bfConZip').value;b.conCountry=document.getElementById('bfConCountry').value;
+  b.carrName=document.getElementById('bfCarrName').value;b.carrScac=document.getElementById('bfCarrScac').value;
+  b.carrDriver=document.getElementById('bfCarrDriver').value;b.carrPlate=document.getElementById('bfCarrPlate').value;
+  b.carrTrailer=document.getElementById('bfCarrTrailer').value;b.carrSeal=document.getElementById('bfCarrSeal').value;
+  b.carrPro=document.getElementById('bfCarrPro').value;b.carrPickup=document.getElementById('bfCarrPickup').value;
+  b.carrDelivery=document.getElementById('bfCarrDelivery').value;b.carrFreight=document.getElementById('bfCarrFreight').value;
+  save();
+  // Flash save
+  var btn=document.getElementById('bolSave');btn.textContent=L('Saved!','Sauvegard\u00e9!');setTimeout(function(){btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> '+L('Save B/L','Sauvegarder B/L');},1200);
+});
+
+// Delete B/L data
+document.getElementById('bolDelete').addEventListener('click',function(){
+  if(!_bolFileId)return;
+  if(!confirm(L('Reset B/L data for this file?','R\u00e9initialiser le B/L de ce dossier ?')))return;
+  var f=getFile(_bolFileId);if(f)f.bol={shipName:'',shipAddr:'',shipCity:'',shipState:'',shipZip:'',shipCountry:'',conName:'',conAddr:'',conCity:'',conState:'',conZip:'',conCountry:'',carrName:'',carrScac:'',carrDriver:'',carrPlate:'',carrTrailer:'',carrSeal:'',carrPro:'',carrPickup:'',carrDelivery:'',carrFreight:'prepaid',port:'',incoterm:'FCA',currency:'USD',pars:'',notesSpecial:'',notesCustoms:''};
+  delete _bolLines[_bolFileId];save();closeBol();
+});
+
+// ═══════════════════════════════════════
+//  PRINT B/L
+// ═══════════════════════════════════════
+function printBol(fileId){
+  var f=getFile(fileId);if(!f)return;
+  var b=f.bol;
+  var lines=_bolLines[fileId]||[];
+  var pcs=0,gw=0,nw=0,val=0;
+  lines.forEach(function(ln){pcs+=parseFloat(ln.pcs)||0;gw+=parseFloat(ln.grossWt)||0;nw+=parseFloat(ln.netWt)||0;val+=parseFloat(ln.value)||0;});
+  var lbs=Math.round(gw*2.20462);
+
+  var h='';
+  // Title
+  h+='<div class="bol-title">BILL OF LADING / ORIGINAL - NOT NEGOTIABLE</div>';
+  h+='<div class="bol-page-num">Page: 1/1</div>';
+
+  // Top section: Shipper left | Refs + Logo right
+  h+='<div class="bol-top">';
+  // Left: Shipper
+  h+='<div class="bol-top-left">';
+  h+='<div class="bol-cell" style="min-height:110px;border-bottom:1px solid #000">';
+  h+='<div class="bol-cell-label">Shipper / Exp\u00e9diteur</div>';
+  h+='<div class="bol-cell-val">'+esc(b.shipName)+'</div>';
+  if(b.shipAddr)h+='<div class="bol-cell-val-sm">'+esc(b.shipAddr)+'</div>';
+  var shipLoc='';
+  if(b.shipCity)shipLoc+=b.shipCity;
+  if(b.shipState)shipLoc+=(shipLoc?', ':'')+b.shipState;
+  if(b.shipZip)shipLoc+=(shipLoc?', ':'')+b.shipZip;
+  if(shipLoc)h+='<div class="bol-cell-val-sm">'+esc(shipLoc)+'</div>';
+  if(b.shipCountry)h+='<div class="bol-cell-val-sm">'+esc(b.shipCountry)+'</div>';
+  h+='</div>';
+  // Left: Consignee
+  h+='<div class="bol-cell" style="min-height:100px;border-bottom:1px solid #000">';
+  h+='<div class="bol-cell-label">Consignee / Destinataire</div>';
+  h+='<div class="bol-cell-val">'+esc(b.conName)+'</div>';
+  if(b.conAddr)h+='<div class="bol-cell-val-sm">'+esc(b.conAddr)+'</div>';
+  var conLoc='';
+  if(b.conCity)conLoc+=b.conCity;
+  if(b.conState)conLoc+=(conLoc?', ':'')+b.conState;
+  if(b.conZip)conLoc+=(conLoc?', ':'')+b.conZip;
+  if(conLoc)h+='<div class="bol-cell-val-sm">'+esc(conLoc)+'</div>';
+  if(b.conCountry)h+='<div class="bol-cell-val-sm">'+esc(b.conCountry)+'</div>';
+  h+='</div>';
+  // Left: Notify Party
+  h+='<div class="bol-cell">';
+  h+='<div class="bol-cell-label">Notify Party / Partie notifi\u00e9s</div>';
+  h+='<div class="bol-cell-val-sm">&nbsp;</div>';
+  h+='</div>';
+  h+='</div>';
+
+  // Right column
+  h+='<div>';
+  // Refs row
+  h+='<div class="bol-ref-row">';
+  h+='<div class="bol-ref-cell"><div class="bol-cell-label">Booking / Cust.Ref. #</div><div class="bol-cell-val-sm">PO# '+esc(f.num)+'</div></div>';
+  h+='<div class="bol-ref-cell"><div class="bol-cell-label">Reference #</div><div class="bol-cell-val-sm">'+esc(f.ref)+'</div></div>';
+  h+='</div>';
+  // W2C Logo area
+  h+='<div class="bol-logo-area">';
+  h+='<svg viewBox="0 0 196 112"><polygon points="54.7 37 46.4 60.1 37 37 30 37 20.9 60.1 12.1 37 1.6 37 16.3 75.1 23.3 75.1 32.9 51.1 42.5 75.1 49.3 75.1 64 37 54.7 37" fill="#000"/><path d="M107.1,66.8H89.2l19.3-11.7c3.1-2.8,4.4-5.1,4.9-7.1.8-2.2,1-4.9,0-8.1-3.4-11.6-16.5-11.3-20.8-11.2-13.9.3-17.4,9.7-17.3,14.6l7.5-.1c0-1.1.6-6.9,10-7.1,8.4-.2,11.5,1.9,12.8,4.2h0c.4.9.6,1.8.6,2.8,0,2.4-.4,3.8-2.4,5.6L79.4,61.4c-4.7,2.9-5,4.7-5,7.4v4.1h31.9c6.1,0,9.2-1.2,9.2-8v-.2l-8.4,0Z" fill="#ea0029"/><path d="M194.5,52.3v-5.6c0-7.1-2.4-9.3-9.8-9.3H163.1c-7.4,0-9.8,2.3-9.8,9.3v19.1c0,7.1,2.4,9.3,9.8,9.3h21.6c7.4,0,9.8-2.3,9.8-9.3v-5.5h-10v6.5h-21.2V45.4h21.2v6.9h10Z" fill="#000"/></svg>';
+  h+='<div style="margin-left:12px;font-size:7.5px;line-height:1.5;color:#333"><strong>W2C GESTION DOUANI\u00c8RE</strong><br>1919 Lionel Bertrand, suite 104<br>Boisbriand, (Qu\u00e9bec) J7H 1N8</div>';
+  h+='</div>';
+  // Date of Issue
+  h+='<div class="bol-cell" style="border-bottom:1px solid #000">';
+  h+='<div class="bol-cell-label">Date of Issue / Date, d\'Origine</div>';
+  h+='<div class="bol-cell-val">'+esc(f.date)+'</div>';
+  h+='</div>';
+  // Carrier
+  h+='<div class="bol-cell" style="border-bottom:1px solid #000">';
+  h+='<div class="bol-cell-label">Carrier / Transporteur</div>';
+  h+='<div class="bol-cell-val">'+esc(b.carrName).toUpperCase()+'</div>';
+  h+='</div>';
+  // Terms
+  h+='<div class="bol-cell">';
+  h+='<div class="bol-cell-label">Terms of delivery &amp; payment / Conditions de livraison et de paiement</div>';
+  h+='<div class="bol-cell-val-sm">'+(b.carrFreight?esc(b.carrFreight).toUpperCase():'')+(b.incoterm?' / '+esc(b.incoterm):'')+'</div>';
+  h+='</div>';
+  h+='</div>';
+  h+='</div>';
+
+  // Legal text
+  h+='<div class="bol-legal">';
+  h+='Received subject to the classification and tariffs in effect on date of issue of this original bill of lading, the goods described below in apparent good order, except as noted (contents and conditions of contents of packages unknown), marked, consigned and destined as indicated below, which said carrier agrees to carry to its usual place of delivery at said destination, if on its road, otherwise to deliver to another carrier on route to said destination. It is mutually agreed, as to each carrier of all or any said goods over all or any portion of said route to destination, and as to each party at any time interested in all or any of said goods that every service to be performed hereunder shall be subject to all the terms and conditions (which are hereby incorporated by reference and have the same force and effects as if same were severally, fully and specifically set forth herein).<br>';
+  h+='1. Approved by the Board of Transport Commissioners for Canada by General Order No.T-5, dated February 1, 1965 set forth on the Canadian Freight Classification and General Order No. T-43, dated September 18, 1967 set forth in the rules for the carriage of Express and non-Carload Freight Traffic, available at all Express and Railway Agency Stations and Offices upon request, when said goods are carried by a rail carrier; or;<br>';
+  h+='2. of the bill of lading (long form) of water carrier when said goods are carried by water carrier;<br>';
+  h+='3. of the bill of lading set forth in or prescribed by the relevant tariffs, classification, statutes and regulations (including those of form R.T. 200 for the province of Quebec) pertaining to motor carrier\'s services when said goods are carried by a motor carrier; all of which are agreed to by the shipper and accepted to himself and his assigns.';
+  h+='</div>';
+
+  // Commodity table
+  h+='<table class="bol-goods"><thead><tr>';
+  h+='<th style="width:70px">No. of Pieces<br><span style="font-weight:400">Nombre de Colis</span></th>';
+  h+='<th style="width:70px">Type / Sorte</th>';
+  h+='<th>Description of Goods<br><span style="font-weight:400">Description des marchandises</span></th>';
+  h+='<th style="width:80px;text-align:right">Gross weight<br><span style="font-weight:400">Poids brut</span></th>';
+  h+='</tr></thead><tbody>';
+
+  // Commodity rows
+  var descAll='';
+  lines.forEach(function(ln,i){
+    var rowPcs=(ln.pcs||'');
+    var rowPkg=(ln.pkg||'');
+    var rowDesc=(ln.desc||'');
+    var rowWt=(ln.grossWt||'');
+    if(i===0){
+      h+='<tr class="goods-body"><td style="vertical-align:top;text-align:center;font-size:12px;font-weight:700">'+esc(rowPcs)+'</td>';
+      h+='<td style="vertical-align:top;font-size:11px;font-weight:700">'+esc(rowPkg).toUpperCase()+'</td>';
+      h+='<td style="vertical-align:top">';
+      h+='<div style="font-size:12px;font-weight:700">'+esc(rowDesc).toUpperCase()+'</div>';
+    } else {
+      descAll+='\\n'+esc(rowDesc).toUpperCase();
+    }
+  });
+  if(lines.length===0){
+    h+='<tr class="goods-body"><td></td><td></td><td>';
+  }
+  // Additional commodity descriptions
+  if(descAll)h+='<div style="margin-top:4px;font-size:11px;font-weight:700;white-space:pre-line">'+descAll+'</div>';
+  h+='</td>';
+  // Weight column
+  var wtStr='';
+  if(lbs)wtStr+=lbs+' Lbs';
+  if(gw)wtStr+=(wtStr?'\\n':'')+fmtN(gw,0)+' Kgs';
+  h+='<td style="vertical-align:top;font-size:11px;font-weight:700;white-space:pre-line">'+wtStr+'</td></tr>';
+  h+='</tbody></table>';
+
+  // Notes + W2C company block
+  h+='<div class="bol-remark" style="display:flex;justify-content:space-between;align-items:flex-start">';
+  h+='<div><div class="bol-remark-label" style="font-size:9px;font-weight:800;font-style:italic">NOTES:</div>';
+  h+='<div class="bol-remark-text" style="font-size:10px">';
+  if(b.carrPickup) h+='PICKUP: '+esc(b.carrPickup)+'<br>';
+  h+='REF. '+esc(f.num)+'<br>';
+  h+='CUSTOMS CLEARANCE BY: W2C. PARS@W2C.CA';
+  h+='</div></div>';
+  h+='<div style="text-align:right;font-size:8px;line-height:1.5;color:#000;padding-left:20px;flex-shrink:0">';
+  h+='<strong style="font-size:9px">W2C GESTION DOUANI\u00c8RE</strong><br>';
+  h+='1919 Lionel Bertrand, suite 104<br>';
+  h+='Boisbriand, (Qu\u00e9bec) J7H 1N8';
+  h+='</div></div>';
+
+  // Bottom 3-column
+  h+='<div class="bol-bottom-3">';
+  h+='<div><div class="bb-title">Declared Valuation $</div>Maximum liability of $2.00 per pound ($4.41 per Kilogram) computed on the total weight of the shipment unless declared valuation states otherwise.</div>';
+  h+='<div><div class="bb-title">Notice Of Claim</div>a) No carrier is liable for loss, damage or delay to any goods carried under the bill of lading unless notice thereof setting out particulars of the origin, destination and date of shipment of the goods and the estimated amount claimed in respect of such loss, damage or delay is given in writing to the originating carrier or delivering carrier within sixty (60) days after the delivery of the goods or, in the case of failure to make delivery, within nine (9) months from the date of shipment.<br><br>b) The final statement of the claim must be filed within nine (9) months from the date of shipment together with a copy of the paid freight bill.</div>';
+  h+='<div>If this truck or trailer is delayed or detained, detention or demurrage will apply.<br><br>Any loss or damage must be noted by the receiver (not our driver) on signature copy at time of delivery. Otherwise consignee\'s signature will constitute clear receipt and claims will not be honoured. C.O.D. collections must be cash or marked cheque.</div>';
+  h+='</div>';
+
+  // CIFFA
+  h+='<div class="bol-ciffa">All shipments are only accepted subject to the Standard Trading Conditions of the Canadian International Freight Forwarders Association (C.I.F.F.A.). Copy available upon request.<br>Toutes affaires et transactions sont trait\u00e9s aux conditions et usages de commerce standard de l\'Association des Transitaires Internationaux Canadiens (C.I.F.F.A). Copie disponible sur demande.</div>';
+
+  // Signatures
+  h+='<div class="bol-sigs">';
+  h+='<div class="bol-sig-cell"><div class="bol-sig-label">Shipper\'s Name &amp; Signature</div></div>';
+  h+='<div class="bol-sig-cell"><div class="bol-sig-label">Date</div></div>';
+  h+='<div class="bol-sig-cell"><div class="bol-sig-label">Driver\'s Name &amp; Signature</div></div>';
+  h+='<div class="bol-sig-cell"><div class="bol-sig-label">Date</div></div>';
+  h+='<div class="bol-sig-cell"><div class="bol-sig-label">Consignee\'s Name &amp; Signature</div></div>';
+  h+='<div class="bol-sig-cell"><div class="bol-sig-label">Date</div></div>';
+  h+='</div>';
+
+  document.getElementById('printContent').innerHTML=h;
+  document.getElementById('printOverlay').classList.add('show');
+}
+
+document.getElementById('tbPrint').addEventListener('click',function(){
+  var sel=files.filter(function(f){return f.selected;});
+  if(sel.length===1)printBol(sel[0].id);
+  else if(_bolFileId)printBol(_bolFileId);
+  else alert(L('Select a file first or open a B/L','S\u00e9lectionnez un dossier ou ouvrez un B/L'));
+});
+document.getElementById('bolPrintBtn').addEventListener('click',function(){if(_bolFileId)printBol(_bolFileId);});
+document.getElementById('printClose').addEventListener('click',function(){document.getElementById('printOverlay').classList.remove('show');});
+
+// ═══════════════════════════════════════
+//  EXPORT CSV
+// ═══════════════════════════════════════
+document.getElementById('tbExport').addEventListener('click',function(){
+  if(!files.length){alert(L('No files to export','Aucun dossier \u00e0 exporter'));return;}
+  var header=lang==='fr'?['Dossier #','Client','Date','Orig.','Dest.','Transporteur','Co\u00fbt','Vente','Notes','R\u00e9f.','Statut']:['File #','Client','Date','Origin','Dest','Carrier','Cost','Sell','Notes','Ref','Status'];
+  var csvRows=[header.join(',')];
+  files.forEach(function(f){
+    csvRows.push([f.num,'"'+f.client+'"',f.date,f.orig,f.dest,'"'+f.carrier+'"',f.cost,f.sell,'"'+f.notes+'"','"'+f.ref+'"','"'+f.status+'"'].join(','));
+  });
+  var blob=new Blob([csvRows.join('\n')],{type:'text/csv'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='W2C_TRK_Export.csv';a.click();
+});
+
+// ═══════════════════════════════════════
+//  WHITEBOARD
+// ═══════════════════════════════════════
+var wbOverlay=document.getElementById('wbOverlay');
+var wbPanel=document.getElementById('wbPanel');
+var wbCanvas=document.getElementById('wbCanvas');
+var wbCtx=wbCanvas.getContext('2d');
+var _wbTool='pen',_wbDrawing=false,_wbHistory=[],_wbNotes=[];
+var _wbNoteId=0;
+
+function wbResize(){
+  var wrap=document.getElementById('wbCanvasWrap');
+  var w=wrap.clientWidth,h=wrap.clientHeight;
+  // Save current image
+  var imgData=null;
+  if(wbCanvas.width>0&&wbCanvas.height>0){try{imgData=wbCtx.getImageData(0,0,wbCanvas.width,wbCanvas.height);}catch(e){}}
+  wbCanvas.width=w;wbCanvas.height=h;
+  if(imgData)wbCtx.putImageData(imgData,0,0);
+}
+
+function openWhiteboard(){
+  wbOverlay.classList.add('open');
+  setTimeout(function(){wbResize();wbRedraw();},50);
+}
+function closeWhiteboard(){wbOverlay.classList.remove('open');wbSaveState();}
+
+document.getElementById('tbWhiteboard').addEventListener('click',openWhiteboard);
+document.getElementById('wbClose').addEventListener('click',closeWhiteboard);
+wbOverlay.addEventListener('click',function(e){if(e.target===wbOverlay)closeWhiteboard();});
+
+// Tool selection
+document.getElementById('wbToolbar').addEventListener('click',function(e){
+  var btn=e.target.closest('[data-tool]');
+  if(btn){
+    document.querySelectorAll('.wb-tool[data-tool]').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');_wbTool=btn.dataset.tool;
+  }
+});
+
+// Drawing
+wbCanvas.addEventListener('mousedown',function(e){
+  if(e.button!==0)return;
+  _wbDrawing=true;
+  var r=wbCanvas.getBoundingClientRect();
+  var x=e.clientX-r.left,y=e.clientY-r.top;
+  wbCtx.beginPath();wbCtx.moveTo(x,y);
+  if(_wbTool==='eraser'){
+    wbCtx.globalCompositeOperation='destination-out';
+    wbCtx.lineWidth=parseInt(document.getElementById('wbSize').value)*5;
+  } else {
+    wbCtx.globalCompositeOperation='source-over';
+    wbCtx.strokeStyle=document.getElementById('wbColor').value;
+    wbCtx.lineWidth=parseInt(document.getElementById('wbSize').value);
+  }
+  wbCtx.lineCap='round';wbCtx.lineJoin='round';
+});
+wbCanvas.addEventListener('mousemove',function(e){
+  if(!_wbDrawing)return;
+  var r=wbCanvas.getBoundingClientRect();
+  wbCtx.lineTo(e.clientX-r.left,e.clientY-r.top);
+  wbCtx.stroke();
+});
+wbCanvas.addEventListener('mouseup',function(){
+  if(_wbDrawing){_wbDrawing=false;wbCtx.globalCompositeOperation='source-over';wbSnapshot();}
+});
+wbCanvas.addEventListener('mouseleave',function(){
+  if(_wbDrawing){_wbDrawing=false;wbCtx.globalCompositeOperation='source-over';wbSnapshot();}
+});
+
+// Touch support
+wbCanvas.addEventListener('touchstart',function(e){e.preventDefault();var t=e.touches[0];wbCanvas.dispatchEvent(new MouseEvent('mousedown',{clientX:t.clientX,clientY:t.clientY}));},{passive:false});
+wbCanvas.addEventListener('touchmove',function(e){e.preventDefault();var t=e.touches[0];wbCanvas.dispatchEvent(new MouseEvent('mousemove',{clientX:t.clientX,clientY:t.clientY}));},{passive:false});
+wbCanvas.addEventListener('touchend',function(e){e.preventDefault();wbCanvas.dispatchEvent(new MouseEvent('mouseup'));},{passive:false});
+
+function wbSnapshot(){
+  try{_wbHistory.push(wbCanvas.toDataURL());}catch(e){}
+  if(_wbHistory.length>30)_wbHistory.shift();
+}
+function wbRedraw(){
+  if(_wbHistory.length>0){
+    var img=new Image();img.onload=function(){wbCtx.clearRect(0,0,wbCanvas.width,wbCanvas.height);wbCtx.drawImage(img,0,0);};
+    img.src=_wbHistory[_wbHistory.length-1];
+  }
+}
+
+// Undo
+document.getElementById('wbUndo').addEventListener('click',function(){
+  if(_wbHistory.length>0){_wbHistory.pop();
+    wbCtx.clearRect(0,0,wbCanvas.width,wbCanvas.height);
+    if(_wbHistory.length>0){var img=new Image();img.onload=function(){wbCtx.drawImage(img,0,0);};img.src=_wbHistory[_wbHistory.length-1];}
+  }
+});
+
+// Clear
+document.getElementById('wbClear').addEventListener('click',function(){
+  if(!confirm(L('Clear whiteboard?','Effacer le tableau blanc ?')))return;
+  wbCtx.clearRect(0,0,wbCanvas.width,wbCanvas.height);
+  _wbHistory=[];
+  document.getElementById('wbNotes').innerHTML='';_wbNotes=[];
+  wbSaveState();
+});
+
+// Sticky notes
+document.getElementById('wbAddNote').addEventListener('click',function(){
+  var n={id:++_wbNoteId,x:40+Math.random()*200,y:40+Math.random()*150,text:'',color:'#FFF9C4'};
+  _wbNotes.push(n);
+  renderWbNote(n);
+});
+
+function renderWbNote(n){
+  var div=document.createElement('div');div.className='wb-note';div.dataset.id=n.id;
+  div.style.left=n.x+'px';div.style.top=n.y+'px';div.style.background=n.color;
+  div.innerHTML='<div class="wb-note-head"><span>'+L('NOTE','NOTE')+'</span><button class="wb-note-del" data-id="'+n.id+'">&times;</button></div><textarea placeholder="'+L('Type here...','Ecrire ici...')+'">'+esc(n.text)+'</textarea>';
+  // Drag
+  var hdr=div.querySelector('.wb-note-head');
+  var ox=0,oy=0,dragging=false;
+  hdr.addEventListener('mousedown',function(e){dragging=true;ox=e.offsetX;oy=e.offsetY;e.preventDefault();});
+  document.addEventListener('mousemove',function(e){
+    if(!dragging)return;
+    var wrap=document.getElementById('wbCanvasWrap').getBoundingClientRect();
+    div.style.left=Math.max(0,e.clientX-wrap.left-ox)+'px';
+    div.style.top=Math.max(0,e.clientY-wrap.top-oy)+'px';
+  });
+  document.addEventListener('mouseup',function(){if(dragging){dragging=false;syncWbNote(n.id,div);}});
+  // Delete
+  div.querySelector('.wb-note-del').addEventListener('click',function(){
+    _wbNotes=_wbNotes.filter(function(nn){return nn.id!==n.id;});
+    div.remove();wbSaveState();
+  });
+  // Text change
+  div.querySelector('textarea').addEventListener('input',function(){syncWbNote(n.id,div);});
+  document.getElementById('wbNotes').appendChild(div);
+}
+
+function syncWbNote(id,div){
+  for(var i=0;i<_wbNotes.length;i++){
+    if(_wbNotes[i].id===id){
+      _wbNotes[i].x=parseInt(div.style.left)||0;
+      _wbNotes[i].y=parseInt(div.style.top)||0;
+      _wbNotes[i].text=div.querySelector('textarea').value;break;
+    }
+  }
+  wbSaveState();
+}
+
+// Persist whiteboard
+function wbSaveState(){
+  try{localStorage.setItem('w2c_trk_wb',JSON.stringify({canvas:_wbHistory.length?_wbHistory[_wbHistory.length-1]:'',notes:_wbNotes,noteId:_wbNoteId}));}catch(e){}
+}
+function wbLoadState(){
+  try{
+    var d=JSON.parse(localStorage.getItem('w2c_trk_wb'));
+    if(d){
+      if(d.canvas){_wbHistory=[d.canvas];}
+      if(d.notes){_wbNotes=d.notes;_wbNoteId=d.noteId||0;
+        _wbNotes.forEach(function(n){renderWbNote(n);});
+      }
+    }
+  }catch(e){}
+}
+wbLoadState();
+window.addEventListener('resize',function(){if(wbOverlay.classList.contains('open'))wbResize();});
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+render();
+
+})();
+</script>
+</body>
+</html>
